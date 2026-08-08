@@ -208,14 +208,21 @@ def foreign_predicate(
   if output_arg_types is None:
     if signature.return_annotation is None:
       raise Exception(f"Return type annotation not provided")
-    elif not str(signature.return_annotation).startswith("typing.ClassVar[typing.Generator[typing.Union[typing.Tuple["):
+    elif typing.get_origin(signature.return_annotation) is not ClassVar:
       raise Exception(f"Return type must be Facts")
     else:
-      args = signature.return_annotation \
-        .__dict__["__args__"][0] \
-        .__dict__["__args__"][0] \
-        .__dict__["__args__"][0] \
-        .__dict__["__args__"]
+      # Structural unwrap: str() of ClassVar[Generator[Union[...]]] differs across Python versions (typing.Union vs `|`)
+      import collections.abc
+      args = typing.get_args(signature.return_annotation)  # (Generator,)
+      if len(args) != 1 or typing.get_origin(args[0]) is not collections.abc.Generator:
+        raise Exception(f"Return type must be Facts")
+      args = typing.get_args(args[0])  # (Union, NoneType, NoneType)
+      if len(args) < 1 or typing.get_origin(args[0]) is not typing.Union:
+        raise Exception(f"Return type must be Facts")
+      args = typing.get_args(args[0])  # (Tuple[TagType, TupleType], TupleType)
+      if len(args) < 1:
+        raise Exception(f"Return type must be Facts")
+      args = typing.get_args(args[0])  # (TagType, TupleType)
       if len(args) != 2:
         raise Exception(f"Facts must have 2 type arguments")
 
