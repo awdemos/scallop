@@ -19,3 +19,9 @@ __pycache__
 # Scallop
 *.sclcmpl
 /.scllog
+
+# Agent state
+/.omo
+
+# Organism runtime state
+/experiments/organism/state.json
