@@ -3,6 +3,9 @@ target
 /.tmp
 /Cargo.lock
 
+# Worktrees
+/.worktrees
+
 # MacOS
 .DS_Store
 
