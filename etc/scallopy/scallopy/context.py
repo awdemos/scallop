@@ -201,7 +201,8 @@ class ScallopContext:
 
       # Update parameters related to provenance
       new_ctx.provenance = provenance
-      new_ctx._k = k
+      new_ctx._k = new_k
+      new_ctx._wmc_with_disjunctions = new_wmc_with_disjunctions
 
     if monitors is not None:
       # Update parameters related to provenance
