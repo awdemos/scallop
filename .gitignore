@@ -25,3 +25,7 @@ __pycache__
 
 # Organism runtime state
 /experiments/organism/state.json
+
+# desloppify scan artifacts
+.desloppify/
+scorecard.png
