@@ -90,7 +90,7 @@ pub fn generate_exec_rust_project(
   let parent_dir = opt.input.parent().unwrap();
   let tmp_dir = parent_dir.join(format!(".{}.exec.sclcmpl", program_name));
   let scallop_source_dir = env::var("SCALLOPDIR").expect(
-    "Please set envrionment variable `SCALLOPDIR` to be the root of Scallop source directory before using `sclc`.",
+    "Please set environment variable `SCALLOPDIR` to be the root of Scallop source directory before using `sclc`.",
   );
 
   // Create a temporary directory holding the cargo project
@@ -135,8 +135,10 @@ fn cmd_line_option_struct(opt: &Options, program_name: &str) -> TokenStream {
       struct Options {
         #[structopt(short, long, default_value = "unit")]
         provenance: String,
-        #[structopt(long, default_value = "3")]
+        #[structopt(short = "k", long, default_value = "3")]
         top_k: usize,
+        #[structopt(long)]
+        wmc_with_disjunctions: bool,
       }
     }
   }
@@ -163,9 +165,11 @@ fn main_body(opt: &Options) -> TokenStream {
       "topkproofs" => {
         quote! { run(top_k_proofs::TopKProofsProvenance::<RcFamily>::new(#top_k, #wmc_with_disjunctions)); }
       }
-      "samplekproofs" => quote! { run(sample_k_proofs::SampleKProofsContext::new(#top_k)); },
+      "samplekproofs" => {
+        quote! { run(sample_k_proofs::SampleKProofsProvenance::<RcFamily>::new(#top_k)); }
+      }
       "topbottomkclauses" => {
-        quote! { run(top_bottom_k_clauses::TopBottomKClausesContext::<RcFamily>::new(#top_k, #wmc_with_disjunctions)); }
+        quote! { run(top_bottom_k_clauses::TopBottomKClausesProvenance::<RcFamily>::new(#top_k, #wmc_with_disjunctions)); }
       }
       p => panic!("Unknown provenance `{}`. Aborting", p),
     }
@@ -178,8 +182,8 @@ fn main_body(opt: &Options) -> TokenStream {
         "minmaxprob" => run(min_max_prob::MinMaxProbProvenance::default()),
         "addmultprob" => run(add_mult_prob::AddMultProbProvenance::default()),
         "topkproofs" => run(top_k_proofs::TopKProofsProvenance::<RcFamily>::new(opt.top_k, opt.wmc_with_disjunctions)),
-        "samplekproofs" => run(sample_k_proofs::SampleKProofsProvenance::new(opt.top_k)),
-        "topbottomkclauses" => run(top_bottom_k_clauses::TopBottomKClausesProvenance::<RcFamily>::new(opt.top_k, opt.wmc_with_disjunction)),
+        "samplekproofs" => run(sample_k_proofs::SampleKProofsProvenance::<RcFamily>::new(opt.top_k)),
+        "topbottomkclauses" => run(top_bottom_k_clauses::TopBottomKClausesProvenance::<RcFamily>::new(opt.top_k, opt.wmc_with_disjunctions)),
         p => println!("Unknown provenance `{}`. Aborting", p),
       }
     }
