@@ -102,7 +102,7 @@ impl Provenance for RealTropicalProofsProvenance {
 
   fn zero(&self) -> Self::Tag {
     Self::Tag {
-      real: std::f64::INFINITY,
+      real: f64::INFINITY,
       proof: BTreeSet::new(),
     }
   }

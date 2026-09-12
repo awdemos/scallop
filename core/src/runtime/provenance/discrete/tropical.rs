@@ -74,7 +74,7 @@ impl Provenance for TropicalProvenance {
     if let Some(n) = t.as_usize() {
       n
     } else {
-      std::usize::MAX
+      usize::MAX
     }
   }
 

@@ -31,7 +31,7 @@ impl Provenance for RealTropicalProvenance {
   }
 
   fn zero(&self) -> Self::Tag {
-    std::f64::INFINITY
+    f64::INFINITY
   }
 
   fn one(&self) -> Self::Tag {
