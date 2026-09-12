@@ -511,6 +511,35 @@ impl AggregateRegistry {
   }
 }
 
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_std_registry_has_unique_names() {
+    let registry = AggregateRegistry::std();
+    let names: Vec<&String> = registry.registry.keys().collect();
+    let unique_names: HashSet<&String> = names.iter().copied().collect();
+    assert_eq!(
+      names.len(),
+      unique_names.len(),
+      "aggregate registry contains duplicate names after registration"
+    );
+  }
+
+  #[test]
+  fn test_std_registry_has_samplers() {
+    let registry = AggregateRegistry::std();
+    for name in ["categorical", "uniform", "top", "unique"] {
+      assert!(
+        registry.registry.contains_key(name),
+        "sampler `{}` must be registered",
+        name
+      );
+    }
+  }
+}
+
 pub trait Aggregator<P: Provenance>: dyn_clone::DynClone + 'static {
   fn aggregate(&self, p: &P, env: &RuntimeEnvironment, elems: DynamicElements<P>) -> DynamicElements<P>;
 }

@@ -24,7 +24,7 @@ impl Into<DynamicAggregate> for CategoricalAggregate {
 
 impl SampleAggregate for CategoricalAggregate {
   fn name(&self) -> String {
-    "uniform".to_string()
+    "categorical".to_string()
   }
 
   fn param_types(&self) -> Vec<ParamType> {
